@@ -101,12 +101,12 @@ export function Table<TData>({ data, columns, storageKey }: TableProps<TData>) {
       </thead>
       <tbody>
         {table.getRowModel().rows.map((row) => (
-          <tr key={row.id} className="hover:bg-[var(--color-border)]/30">
+          <tr key={row.id} className="group hover:bg-[var(--color-border)]/30">
             {row.getVisibleCells().map((cell) => {
               const meta = cell.column.columnDef.meta as ColumnMeta | undefined;
               const borderClass = meta?.borderLeft ? "border-l border-[var(--color-border)]" : "";
               const stickyClass = meta?.sticky
-                ? "sticky left-0 z-10 bg-[var(--color-bg)] border-r border-[var(--color-border)] shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]"
+                ? "sticky left-0 z-10 bg-[var(--color-bg)] group-hover:bg-[var(--color-border)]/30 border-r border-[var(--color-border)] shadow-[2px_0_4px_-2px_rgba(0,0,0,0.1)]"
                 : "";
               const truncateClass = meta?.sticky ? "truncate max-w-[160px]" : "";
 
