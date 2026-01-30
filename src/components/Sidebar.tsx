@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import { Menu } from "@base-ui/react/menu";
 
 interface FileItem {
   id: string;
@@ -10,10 +11,11 @@ interface Props {
   selectedId: string;
   onSelect: (id: string) => void;
   onUpload: (file: File) => void;
+  onDelete: (id: string) => void;
   isUploading: boolean;
 }
 
-export function Sidebar({ items, selectedId, onSelect, onUpload, isUploading }: Props) {
+export function Sidebar({ items, selectedId, onSelect, onUpload, onDelete, isUploading }: Props) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   function handleDragOver(e: React.DragEvent) {
@@ -37,6 +39,8 @@ export function Sidebar({ items, selectedId, onSelect, onUpload, isUploading }: 
       fileInputRef.current.value = "";
     }
   }
+
+  const canDelete = (id: string) => id !== "demo" && id !== "summary";
 
   return (
     <aside className="w-70 flex-shrink-0 border-r border-[var(--color-border)] flex flex-col h-screen">
@@ -69,20 +73,49 @@ export function Sidebar({ items, selectedId, onSelect, onUpload, isUploading }: 
 
       <nav className="flex-1 overflow-y-auto">
         {items.map((item) => (
-          <button
+          <div
             key={item.id}
-            onClick={() => onSelect(item.id)}
-            className={[
-              "w-full px-4 py-1.5 text-left text-sm flex items-center justify-between",
-              "hover:bg-[var(--color-text)]/5 transition-colors",
-              selectedId === item.id ? "font-medium" : "",
-            ].join(" ")}
+            className="group relative"
           >
-            <span>{item.label}</span>
-            {selectedId === item.id && (
-              <span className="text-[var(--color-muted)]">&gt;</span>
+            <button
+              onClick={() => onSelect(item.id)}
+              className={[
+                "w-full px-4 py-1.5 text-left text-sm flex items-center justify-between",
+                "hover:bg-[var(--color-text)]/5 transition-colors",
+                selectedId === item.id ? "font-medium" : "",
+              ].join(" ")}
+            >
+              <span>{item.label}</span>
+              {selectedId === item.id && (
+                <span className="text-[var(--color-muted)] group-hover:hidden">&gt;</span>
+              )}
+            </button>
+
+            {canDelete(item.id) && (
+              <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Menu.Root>
+                  <Menu.Trigger
+                    onClick={(e) => e.stopPropagation()}
+                    className="px-1.5 py-0.5 text-xs text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-border)] rounded transition-colors"
+                  >
+                    ···
+                  </Menu.Trigger>
+                  <Menu.Portal>
+                    <Menu.Positioner sideOffset={4}>
+                      <Menu.Popup className="bg-[var(--color-bg)] border border-[var(--color-border)] shadow-lg py-1 min-w-[120px] font-mono text-sm">
+                        <Menu.Item
+                          onClick={() => onDelete(item.id)}
+                          className="px-3 py-1.5 cursor-pointer hover:bg-[var(--color-text)]/5 text-red-600 dark:text-red-400 data-[highlighted]:bg-[var(--color-text)]/5 outline-none"
+                        >
+                          Delete
+                        </Menu.Item>
+                      </Menu.Popup>
+                    </Menu.Positioner>
+                  </Menu.Portal>
+                </Menu.Root>
+              </div>
             )}
-          </button>
+          </div>
         ))}
       </nav>
     </aside>

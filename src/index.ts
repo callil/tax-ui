@@ -1,5 +1,5 @@
 import { serve } from "bun";
-import { getReturns, saveReturn, getApiKey, saveApiKey } from "./lib/storage";
+import { getReturns, saveReturn, deleteReturn, getApiKey, saveApiKey } from "./lib/storage";
 import { parseTaxReturn } from "./lib/parser";
 import index from "./index.html";
 
@@ -14,6 +14,16 @@ const server = serve({
     "/api/returns": {
       GET: async () => {
         return Response.json(await getReturns());
+      },
+    },
+    "/api/returns/:year": {
+      DELETE: async (req) => {
+        const year = Number(req.params.year);
+        if (isNaN(year)) {
+          return Response.json({ error: "Invalid year" }, { status: 400 });
+        }
+        await deleteReturn(year);
+        return Response.json({ success: true });
       },
     },
     "/api/parse": {
@@ -48,6 +58,9 @@ const server = serve({
 
           if (message.includes("authentication") || message.includes("API key")) {
             return Response.json({ error: "Invalid API key" }, { status: 401 });
+          }
+          if (message.includes("prompt is too long") || message.includes("too many tokens")) {
+            return Response.json({ error: "PDF is too large to process. Try uploading just the main tax forms." }, { status: 400 });
           }
           if (message.includes("JSON")) {
             return Response.json({ error: "Failed to parse tax return data" }, { status: 422 });

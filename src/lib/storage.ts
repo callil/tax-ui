@@ -17,6 +17,12 @@ export async function saveReturn(taxReturn: TaxReturn): Promise<void> {
   await Bun.write(RETURNS_FILE, JSON.stringify(returns, null, 2));
 }
 
+export async function deleteReturn(year: number): Promise<void> {
+  const returns = await getReturns();
+  delete returns[year];
+  await Bun.write(RETURNS_FILE, JSON.stringify(returns, null, 2));
+}
+
 export function getApiKey(): string | undefined {
   return process.env.ANTHROPIC_API_KEY;
 }
