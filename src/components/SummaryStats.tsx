@@ -52,9 +52,9 @@ export function SummaryStats({ returns }: Props) {
 
     return {
       stats: [
-        { label: "Total Income", value: totalIncome, sparkline: incomePerYear },
-        { label: "Taxes Paid", value: totalTaxes, sparkline: taxesPerYear },
-        { label: "Net Income", value: netIncome, sparkline: netPerYear },
+        { label: "Total Income", value: totalIncome, sparkline: incomePerYear, color: "from-emerald-400 to-teal-500" },
+        { label: "Taxes Paid", value: totalTaxes, sparkline: taxesPerYear, color: "from-rose-400 to-pink-500" },
+        { label: "Net Income", value: netIncome, sparkline: netPerYear, color: "from-blue-400 to-indigo-500" },
       ],
       avgHourlyRate,
       dailySparkline: dailyTakes,
@@ -75,58 +75,71 @@ export function SummaryStats({ returns }: Props) {
       : years[0]?.toString() ?? "";
 
   return (
-    <div className="p-6 pb-0 font-mono flex-shrink-0">
-      <div className="border border-[var(--color-border)] grid grid-cols-4">
-        {stats.stats.map((stat, i) => (
+    <div className="p-6 pb-0 flex-shrink-0">
+      <div className="grid grid-cols-4 gap-4">
+        {stats.stats.map((stat) => (
           <div
             key={stat.label}
-            className={`p-4 ${i > 0 ? "border-l border-[var(--color-border)]" : ""}`}
+            className="bg-[var(--color-bg-elevated)] rounded-2xl p-5 shadow-[var(--shadow-card)] border border-[var(--color-border-subtle)] transition-all duration-200 hover:shadow-[var(--shadow-md)]"
           >
-            <Sparkline
-              values={stat.sparkline}
-              width={80}
-              height={24}
-              className="text-[var(--color-muted)] mb-2"
-            />
-            <div className="text-2xl font-bold tabular-nums">
+            <div className="flex items-center justify-between mb-3">
+              <Sparkline
+                values={stat.sparkline}
+                width={60}
+                height={20}
+                className="text-[var(--color-text-muted)]"
+              />
+              <div className={`w-2 h-2 rounded-full bg-gradient-to-r ${stat.color}`} />
+            </div>
+            <div className="text-2xl font-semibold tabular-nums font-mono tracking-tight text-[var(--color-text)]">
               {formatCompact(stat.value)}
             </div>
-            <div className="text-xs text-[var(--color-muted)] mt-1">
+            <div className="text-xs text-[var(--color-text-muted)] mt-1.5 font-medium">
               {stat.label}
             </div>
           </div>
         ))}
-        <div className="p-4 border-l border-[var(--color-border)]">
-          <Sparkline
-            values={stats.dailySparkline}
-            width={80}
-            height={24}
-            className="text-[var(--color-muted)] mb-2"
-          />
-          <div className="text-2xl font-bold tabular-nums">
+
+        {/* Time Unit Card */}
+        <div className="bg-[var(--color-bg-elevated)] rounded-2xl p-5 shadow-[var(--shadow-card)] border border-[var(--color-border-subtle)] transition-all duration-200 hover:shadow-[var(--shadow-md)]">
+          <div className="flex items-center justify-between mb-3">
+            <Sparkline
+              values={stats.dailySparkline}
+              width={60}
+              height={20}
+              className="text-[var(--color-text-muted)]"
+            />
+            <div className="w-2 h-2 rounded-full bg-gradient-to-r from-amber-400 to-orange-500" />
+          </div>
+          <div className="text-2xl font-semibold tabular-nums font-mono tracking-tight text-[var(--color-text)]">
             {formatTimeUnitValueCompact(timeUnitValue, timeUnit)}
           </div>
-          <div className="text-xs text-[var(--color-muted)] mt-1 flex items-center gap-1">
+          <div className="text-xs text-[var(--color-text-muted)] mt-1.5 font-medium flex items-center gap-1.5">
             <span>{timeUnitLabel}</span>
             {timeUnit === "hourly" && (
               <span
-                className="cursor-help"
+                className="cursor-help text-[var(--color-text-muted)]"
                 title="Based on 2,080 working hours per year (40 hrs × 52 weeks)"
               >
-                ?
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <circle cx="8" cy="8" r="6" />
+                  <path d="M8 5v3M8 10v1" strokeLinecap="round" />
+                </svg>
               </span>
             )}
           </div>
-          <div className="flex gap-0.5 mt-2">
+
+          {/* Time unit switcher */}
+          <div className="flex gap-1 mt-3">
             {(["daily", "hourly", "minute", "second"] as TimeUnit[]).map(
               (unit) => (
                 <button
                   key={unit}
                   onClick={() => setTimeUnit(unit)}
-                  className={`px-1.5 py-0.5 text-[10px] border transition-colors ${
+                  className={`flex-1 py-1.5 text-[10px] font-medium rounded-md transition-all duration-200 ${
                     timeUnit === unit
-                      ? "border-[var(--color-foreground)] bg-[var(--color-foreground)] text-[var(--color-background)]"
-                      : "border-[var(--color-border)] text-[var(--color-muted)] hover:border-[var(--color-muted)]"
+                      ? "bg-[var(--color-accent)] text-white shadow-sm"
+                      : "bg-[var(--color-bg-muted)] text-[var(--color-text-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-bg-subtle)]"
                   }`}
                 >
                   {unit.charAt(0).toUpperCase()}
@@ -136,7 +149,9 @@ export function SummaryStats({ returns }: Props) {
           </div>
         </div>
       </div>
-      <div className="text-right text-xs text-[var(--color-muted)] mt-1">
+
+      {/* Year range indicator */}
+      <div className="text-right text-xs text-[var(--color-text-muted)] mt-3 font-medium">
         {yearRange}
       </div>
     </div>

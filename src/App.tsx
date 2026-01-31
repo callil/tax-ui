@@ -306,8 +306,11 @@ export function App() {
 
   if (state.isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center font-mono text-sm">
-        Loading...
+      <div className="min-h-screen flex items-center justify-center bg-[var(--color-bg)]">
+        <div className="text-center">
+          <div className="w-10 h-10 rounded-xl bg-[var(--color-bg-muted)] animate-pulse mx-auto mb-4" />
+          <p className="text-sm text-[var(--color-text-muted)]">Loading...</p>
+        </div>
       </div>
     );
   }

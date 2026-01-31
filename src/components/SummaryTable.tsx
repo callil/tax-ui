@@ -238,12 +238,12 @@ function ChangeCell({
   const isPositive = change >= 0;
   const isGood = invertPolarity ? !isPositive : isPositive;
 
-  const colorClass = isGood
-    ? "text-green-600 dark:text-green-400"
-    : "text-red-600 dark:text-red-400";
-
   return (
-    <span className={`text-xs ${colorClass}`}>
+    <span className={`text-xs font-medium px-1.5 py-0.5 rounded-full ${
+      isGood
+        ? "text-emerald-600 bg-emerald-50 dark:text-emerald-400 dark:bg-emerald-950"
+        : "text-rose-600 bg-rose-50 dark:text-rose-400 dark:bg-rose-950"
+    }`}>
       {formatPercentChange(current, previous)}
     </span>
   );
@@ -266,18 +266,18 @@ export function SummaryTable({ returns }: Props) {
           const row = info.row.original;
           if (row.isHeader) {
             return (
-              <span className="text-xs font-bold text-[var(--color-muted)] uppercase tracking-wide">
+              <span className="text-xs font-semibold text-[var(--color-accent)] uppercase tracking-wider">
                 {row.label}
               </span>
             );
           }
-          return info.getValue();
+          return <span className="text-[var(--color-text)]">{info.getValue()}</span>;
         },
         meta: {
           sticky: true,
         } satisfies ColumnMeta,
-        size: 160,
-        maxSize: 160,
+        size: 180,
+        maxSize: 180,
       }),
     ];
 
@@ -287,7 +287,7 @@ export function SummaryTable({ returns }: Props) {
       cols.push(
         columnHelper.accessor((row) => row.values[year], {
           id: `year-${year}`,
-          header: () => year,
+          header: () => <span className="font-mono">{year}</span>,
           cell: (info) => {
             const row = info.row.original;
             if (row.isHeader) return null;
@@ -297,16 +297,14 @@ export function SummaryTable({ returns }: Props) {
             const prevValue = prevYear !== undefined ? row.values[prevYear] : undefined;
 
             return (
-              <div className="text-right tabular-nums">
-                <span>{formatValue(value, isRate)}</span>
+              <div className="text-right tabular-nums font-mono flex items-center justify-end gap-2">
+                <span className="text-[var(--color-text)]">{formatValue(value, isRate)}</span>
                 {prevYear !== undefined && (
-                  <span className="pl-2">
-                    <ChangeCell
-                      current={value}
-                      previous={prevValue}
-                      invertPolarity={row.invertPolarity}
-                    />
-                  </span>
+                  <ChangeCell
+                    current={value}
+                    previous={prevValue}
+                    invertPolarity={row.invertPolarity}
+                  />
                 )}
               </div>
             );
@@ -324,7 +322,7 @@ export function SummaryTable({ returns }: Props) {
   }, [years]);
 
   return (
-    <div className="p-6 font-mono text-sm">
+    <div className="p-6 text-sm">
       <Table data={rows} columns={columns} storageKey="summary-table" />
     </div>
   );
