@@ -7,6 +7,7 @@ import { UploadModal } from "./components/UploadModal";
 import { SettingsModal } from "./components/SettingsModal";
 import { OnboardingDialog } from "./components/OnboardingDialog";
 import { Chat } from "./components/Chat";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { extractYearFromFilename } from "./lib/year-extractor";
 import "./index.css";
 
@@ -99,6 +100,7 @@ export function App() {
   const [isDark, setIsDark] = useState(() =>
     typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
   );
+  const [devTriggerError, setDevTriggerError] = useState(false);
 
   // Compute effective demo mode early (dev override takes precedence)
   const effectiveIsDemo = devDemoOverride !== null ? devDemoOverride : state.isDemo;
@@ -499,17 +501,26 @@ export function App() {
     setOnboardingDismissed(true);
   }
 
+  // Dev helper: throws during render to test ErrorBoundary
+  if (devTriggerError) {
+    throw new Error("Test error triggered from dev tools");
+  }
+
   return (
     <div className="flex h-screen">
-      {renderMainPanel()}
+      <ErrorBoundary name="Main Panel">
+        {renderMainPanel()}
+      </ErrorBoundary>
 
       {isChatOpen && (
-        <Chat
-          returns={effectiveReturns}
-          hasApiKey={state.hasStoredKey}
-          isDemo={effectiveIsDemo}
-          onClose={() => setIsChatOpen(false)}
-        />
+        <ErrorBoundary name="Chat">
+          <Chat
+            returns={effectiveReturns}
+            hasApiKey={state.hasStoredKey}
+            isDemo={effectiveIsDemo}
+            onClose={() => setIsChatOpen(false)}
+          />
+        </ErrorBoundary>
       )}
 
       <OnboardingDialog
@@ -559,7 +570,7 @@ export function App() {
 
       {/* Dev mode indicator */}
       {state.isDev && (
-        <div className="fixed bottom-4 left-4 z-50">
+        <div className="fixed bottom-4 left-4 z-50 flex gap-2">
           <button
             onClick={() => {
               setDevDemoOverride((prev) => {
@@ -576,6 +587,12 @@ export function App() {
           >
             {getDemoOverrideLabel(devDemoOverride)}
             <span className="ml-1.5 opacity-50">Shift+D</span>
+          </button>
+          <button
+            onClick={() => setDevTriggerError(true)}
+            className="px-2 py-1 text-xs font-mono rounded bg-red-500/10 border border-red-500/30 text-red-500 hover:bg-red-500/20 hover:border-red-500/50"
+          >
+            trigger error
           </button>
         </div>
       )}
