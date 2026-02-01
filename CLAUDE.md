@@ -21,6 +21,26 @@ Tax return PDF parser using Claude API and Bun.
 - `src/lib/storage.ts` — Local file persistence
 - `src/App.tsx` — React frontend entry
 
+## Components
+
+Use shared components from `src/components/` instead of raw HTML:
+- `Button` — all buttons (variants: primary, secondary, ghost, outline, danger, pill)
+- `Dialog` — modals and dialogs (wraps Base UI Dialog)
+- `Menu` / `MenuItem` — dropdown menus
+- `Tooltip` — hover tooltips
+- `Tabs` — use `@base-ui/react/tabs` for tab navigation
+
+When adding new UI patterns, check if Base UI has a primitive first: https://base-ui.com
+
+## Patterns
+
+### Modal State
+Use a single union state for mutually exclusive modals:
+```tsx
+const [openModal, setOpenModal] = useState<"settings" | "reset" | null>(null);
+```
+Not separate booleans for each modal.
+
 ## Verification
 
 After changes, run:
