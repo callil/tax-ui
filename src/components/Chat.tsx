@@ -227,7 +227,15 @@ export function Chat({
             <div className="space-y-4">
               {messages.map((message) => (
                 <div key={message.id}>
-                  <div className="text-xs text-(--color-text-muted) mb-1">
+                  <div
+                    className="text-xs mb-1"
+                    style={{
+                      color:
+                        message.role === "assistant"
+                          ? "rgb(217, 119, 87)"
+                          : "var(--color-text-muted)",
+                    }}
+                  >
                     {message.role === "user" ? "You" : "Claude"}
                   </div>
                   <div className="text-sm prose-chat">
@@ -282,7 +290,10 @@ export function Chat({
               ))}
               {isLoading && (
                 <div>
-                  <div className="text-xs text-(--color-text-muted) mb-1">
+                  <div
+                    className="text-xs mb-1"
+                    style={{ color: "rgb(217, 119, 87)" }}
+                  >
                     Claude
                   </div>
                   <BrailleSpinner className="text-sm" />

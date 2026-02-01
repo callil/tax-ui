@@ -9,7 +9,7 @@ import { SummaryReceiptView } from "./SummaryReceiptView";
 import { LoadingView } from "./LoadingView";
 import { BrailleSpinner } from "./BrailleSpinner";
 import { Button } from "./Button";
-import { Menu, MenuItem } from "./Menu";
+import { Menu, MenuItem, MenuItemSeparator } from "./Menu";
 
 interface CommonProps {
   isChatOpen: boolean;
@@ -110,8 +110,27 @@ export function MainPanel(props: Props) {
               >
                 <path d="M2.5 1.5a1 1 0 0 1 1.5-.86l7 4a1 1 0 0 1 0 1.72l-7 4A1 1 0 0 1 2.5 9.5v-8z" />
               </svg>
-              Start
+              Get started
             </MenuItem>
+            {!props.isDemo && props.hasUserData && (
+              <MenuItem onClick={props.onOpenReset}>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 14 14"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.25"
+                  className="opacity-60"
+                >
+                  <path d="M1.5 3.5h11M5.5 3.5v-2a1 1 0 011-1h1a1 1 0 011 1v2M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
+                </svg>
+                Reset data
+              </MenuItem>
+            )}
+
+            <MenuItemSeparator />
+
             <MenuItem
               onClick={() =>
                 window.open("https://github.com/brianlovin/tax-ui", "_blank")
@@ -132,26 +151,12 @@ export function MainPanel(props: Props) {
               </svg>
               Contribute
             </MenuItem>
-            {!props.isDemo && props.hasUserData && (
-              <MenuItem onClick={props.onOpenReset}>
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 14 14"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.25"
-                  className="opacity-60"
-                >
-                  <path d="M1.5 3.5h11M5.5 3.5v-2a1 1 0 011-1h1a1 1 0 011 1v2M11 3.5v8a1 1 0 01-1 1H4a1 1 0 01-1-1v-8" />
-                </svg>
-                Reset
-              </MenuItem>
-            )}
           </Menu>
           <Tabs.Root
             value={props.selectedId}
-            onValueChange={(val: string | number | null) => val && props.onSelect(String(val))}
+            onValueChange={(val: string | number | null) =>
+              val && props.onSelect(String(val))
+            }
             className="flex-1 min-w-0"
           >
             <nav

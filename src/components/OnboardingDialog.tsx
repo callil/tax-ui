@@ -60,7 +60,7 @@ function FAQSection() {
 
   return (
     <div className="shrink-0 border-t border-(--color-border) p-4 px-5">
-      <Accordion.Root className="space-y-1">
+      <Accordion.Root className="space-y-px">
         <Accordion.Item value="data-safe">
           <Accordion.Header>
             <Accordion.Trigger className="w-full text-sm font-medium cursor-pointer flex items-center justify-between px-3 py-2.5 rounded-lg group focus:outline-none hover:bg-(--color-bg-muted) transition-colors">
@@ -435,7 +435,7 @@ export function OnboardingDialog({
       title={hasStoredKey ? "Upload tax returns" : "TaxUI"}
       description={
         hasStoredKey
-          ? "Upload more tax return PDFs to analyze"
+          ? "Upload more tax returns"
           : "Make sense of your tax returns"
       }
       size="lg"
@@ -479,7 +479,9 @@ export function OnboardingDialog({
 
         {/* Upload Section */}
         <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Files</label>
+          <label className="block sr-only text-sm font-medium mb-2">
+            Files
+          </label>
           {!showProcessingUI && (
             <div
               onDragOver={handleDragOver}
@@ -508,12 +510,8 @@ export function OnboardingDialog({
                 className="hidden"
               />
               <div className="text-(--color-text-muted)">
-                <p className="text-sm">
-                  Drop PDF files here or click to browse
-                </p>
-                <p className="text-xs mt-1 opacity-70">
-                  Supports multiple files
-                </p>
+                <p className="text-sm">Drop your tax return PDFs here</p>
+                <p className="text-xs mt-1 opacity-70">Click to browse</p>
               </div>
             </div>
           )}
@@ -565,10 +563,12 @@ export function OnboardingDialog({
                   className={`flex items-center gap-2 text-sm rounded-lg px-3 pr-1 py-2 ${
                     fileEntry.isDuplicate
                       ? "bg-(--color-negative)/10 border border-(--color-negative)/20"
-                      : "bg-(--color-bg-muted)"
+                      : "bg-(--color-bg-muted) dark:bg-white/5"
                   }`}
                 >
-                  <span className="truncate flex-1">{fileEntry.file.name}</span>
+                  <span className="truncate flex-1 text-[13px]">
+                    {fileEntry.file.name}
+                  </span>
                   {fileEntry.isExtracting && (
                     <BrailleSpinner className="text-(--color-text-muted)" />
                   )}
@@ -577,7 +577,7 @@ export function OnboardingDialog({
                       className={`text-xs px-1.5 py-0.5 rounded ${
                         fileEntry.isDuplicate
                           ? "bg-(--color-negative)/20 text-(--color-negative)"
-                          : "bg-(--color-bg) text-(--color-text-muted)"
+                          : "bg-black/5 dark:bg-white/5"
                       }`}
                     >
                       {fileEntry.isDuplicate ? "Reprocess" : fileEntry.year}

@@ -153,25 +153,31 @@ const server = serve({
         const client = new Anthropic({ apiKey });
 
         try {
+          const messages: Anthropic.MessageParam[] = history.map((msg: { role: string; content: string }) => ({
+            role: msg.role as "user" | "assistant",
+            content: msg.content,
+          }));
+          // Structured outputs don't allow assistant messages in final position
+          messages.push({ role: "user", content: "Suggest 3 follow-up questions I might ask." });
+
           const response = await client.messages.create({
             model: "claude-haiku-4-5-20251001",
             max_tokens: 256,
-            system: `Generate 3 short follow-up questions based on this tax conversation. Return ONLY a JSON array of strings, nothing else. Example: ["Question 1?", "Question 2?", "Question 3?"]`,
-            messages: history.map((msg: { role: string; content: string }) => ({
-              role: msg.role as "user" | "assistant",
-              content: msg.content,
-            })),
+            system: `You are helping a user explore their own tax return data. Generate 3 short follow-up questions the user might want to ask about their finances. Phrase questions in FIRST PERSON (e.g., "Why did my income drop?" not "Why did your income drop?").`,
+            messages,
+            output_config: {
+              format: {
+                type: "json_schema",
+                schema: {
+                  type: "array",
+                  items: { type: "string" },
+                },
+              },
+            },
           });
 
           const textBlock = response.content.find((block) => block.type === "text");
-          let text = textBlock?.type === "text" ? textBlock.text : "[]";
-
-          // Extract JSON array from response (handle markdown, extra text, etc.)
-          const arrayMatch = text.match(/\[[\s\S]*\]/);
-          if (!arrayMatch) return Response.json({ suggestions: [] });
-
-          const suggestions = JSON.parse(arrayMatch[0]);
-          if (!Array.isArray(suggestions)) return Response.json({ suggestions: [] });
+          const suggestions = JSON.parse(textBlock?.type === "text" ? textBlock.text : "[]");
 
           return Response.json({ suggestions: suggestions.slice(0, 3) });
         } catch (error) {

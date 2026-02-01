@@ -49,7 +49,9 @@ export function Menu({
   alignOffset,
 }: MenuProps) {
   const baseClassName =
-    triggerVariant === "inline" ? triggerInlineClassName : triggerButtonClassName;
+    triggerVariant === "inline"
+      ? triggerInlineClassName
+      : triggerButtonClassName;
 
   const positionerProps = {
     className: "z-50",
@@ -100,5 +102,11 @@ export function MenuItem({
     >
       {children}
     </BaseMenu.Item>
+  );
+}
+
+export function MenuItemSeparator() {
+  return (
+    <BaseMenu.Separator className={`my-2 w-full h-px bg-(--color-border)`} />
   );
 }
