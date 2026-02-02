@@ -170,6 +170,14 @@ export function ReceiptView({ data }: Props) {
                 amount={data.federal.taxableIncome}
               />
               <DataRow label="Tax" amount={data.federal.tax} />
+              {data.federal.additionalTaxes.map((item, i) => (
+                <DataRow
+                  key={`addtax-${i}`}
+                  label={item.label}
+                  amount={item.amount}
+                  isMuted
+                />
+              ))}
               {data.federal.credits.map((item, i) => (
                 <DataRow
                   key={i}
